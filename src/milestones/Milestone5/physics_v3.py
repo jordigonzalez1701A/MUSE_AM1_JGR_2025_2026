@@ -1,0 +1,45 @@
+from numpy import concatenate, array, zeros, abs
+from numpy.linalg import norm
+
+def Kepler(U, t):
+    """
+    Returns F(U)=(\\dot{r}, -r/|r|^3), where r is the position vector.
+    Note: F is not explicitly dependent on t in this case, adding it allows to construct
+    robust functions for the numerical methods.
+    """
+    r = U[0:2]
+    rd = U[2:4]
+
+    return concatenate((rd, -r/norm(r)**3), axis=None)
+
+def linear_oscillator(U, t):
+    """
+    Returns F(U,t)=(y,-x)
+    """
+    return array([U[1], -U[0]])
+
+def N_body_problem(U, t, N_body=5):
+
+    """
+    Returns F(U)=(v0, sum_0, v1, sum_1, ...) for the N-body problem, where sum = \sum_{j=0,i\neq j}^{N_body-1}r_j-r_i/||r_j-r_i||**3.
+    INPUTS:
+    U: State vector (r0, v0, r1, v1, r2, v2,..., r_(Nb-1), v_(Nb-1))
+    t: time.
+    """
+    dim = 3
+    F = zeros(2*N_body*dim)
+    
+    for i in range(0, N_body):
+        # Carga de velocidades
+        
+        F[2*i*dim:(2*i+1)*dim] = U[(2*i+1)*dim:(2*i+2)*dim]
+            
+        sum = zeros(dim)
+        for j in range(0, N_body):
+            if j != i:
+                sum = sum + (U[2*j*dim:(2*j+1)*dim]-U[2*i*dim:(2*i+1)*dim])/norm(U[2*j*dim:(2*j+1)*dim]-U[2*i*dim:(2*i+1)*dim])**3
+        
+        F[(2*i+1)*dim:(2*i+2)*dim] = sum[:]
+    
+    return F
+
