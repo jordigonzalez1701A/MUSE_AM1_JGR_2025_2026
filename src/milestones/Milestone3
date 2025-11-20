@@ -1,7 +1,0 @@
-from numpy import array, concatenate, zeros, linspace
-from numpy.linalg import norm, solve, LinAlgError
-import matplotlib.pyplot as plt
-from Milestone2 import Cauchy_problem
-
-def richardson_extrapolation(F, U0, t, temporal_scheme, **kwargs):
-    Cauchy_problem(F, U0, t, temporal_scheme, **kwargs)
